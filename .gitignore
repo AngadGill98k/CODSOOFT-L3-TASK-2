@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs/editors
+.vscode/
+.idea/
+
+# Build / dist folders (if any)
+dist/
+build/
+
+# Dependency locks (optional, keep if needed)
+package-lock.json
+yarn.lock
+
+# Cache
+.cache/
+.next/
+.tmp/
+.temp/
+
+# Optional: front-end build output (if you use tools like React or bundlers)
+public/build/
+public/dist/
