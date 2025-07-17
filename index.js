@@ -20,12 +20,12 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/todo' }),
-    cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
+    cookie: { maxAge: 1000 * 60 * 60 } 
 }));
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000',  // or wherever your React app runs
-    credentials: true                // 🔥 must be true to support cookies
+    origin: 'http://localhost:3000',  
+    credentials: true                
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
@@ -39,7 +39,7 @@ app.use(passport.initialize());
 app.use(passport.session());
  
 passport.use(new LocalStrategy(
-  { usernameField: 'mail' },  // tell passport to use `mail` instead of `username`
+  { usernameField: 'mail' },
   async (mail, password, done) => {
     let user = await User.findOne({ mail });
     if (!user) return done(null, false, { message: 'User not found' });
@@ -54,7 +54,7 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser((user, done) => {
-  done(null, user._id); // Store only the user ID in  session
+  done(null, user._id); 
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -79,12 +79,12 @@ app.post('/signup', async (req, res) => {
     res.json({ msg: 'user save' })
 })
 
-// adding name of the project
+
 app.post('/signin', passport.authenticate('local'), (req, res) => {
   res.json({ msg: 'Logged in successfully'});
 });
-app.post('/project_name', async (req, res) => {
-    let { project_name } = req.body; // Destructure subProjects
+app.post('/project_name',ensureAuth, async (req, res) => {
+    let { project_name } = req.body; 
     let userid=req.user
     let user = await User.findOne({ _id: userid })
     let todo = new Todo({
@@ -102,20 +102,20 @@ app.post('/project_name', async (req, res) => {
 
   
 });
-app.post('/ret_proj', async (req, res) => {
+app.post('/ret_proj',ensureAuth, async (req, res) => {
     let userid=req.user
     let user = await User.findOne({ _id: userid })
 
     res.json({ msg: "saved", project: user.todo })
 })
-app.post('/ret_proj_todos', async (req, res) => {
-    let { value } = req.body; // Destructure subProjects
+app.post('/ret_proj_todos',ensureAuth, async (req, res) => {
+    let { value } = req.body; 
     let todo = await Todo.findOne({ _id: value })
     //console.log(todo)
     res.json({ todo }) 
 })
-app.post('/add_proj_todo', async (req, res) => {
-    let { id, input } = req.body; // Destructure subProjects
+app.post('/add_proj_todo',ensureAuth, async (req, res) => {
+    let { id, input } = req.body; 
     let todo = await Todo.findOne({ _id: id })
 
     todo.created.push({
@@ -126,7 +126,7 @@ app.post('/add_proj_todo', async (req, res) => {
 
     res.json({ msg: "added to ptoj", todo })
 })
-app.post('/member', async (req, res) => {
+app.post('/member',ensureAuth, async (req, res) => {
     let { member, actproj } = req.body;
     try {
         let project = await Todo.findById(actproj);
@@ -136,13 +136,12 @@ app.post('/member', async (req, res) => {
             return res.status(404).json({ msg: "User or Project not found" });
         }
 
-        // Add user to project.members only if not already present
+   
         if (!project.members.includes(user._id.toString())) {
             project.members.push(user._id);
             await project.save();
         }
 
-        // Add project to user's todo list only if not already present
         if (!user.todo.includes(actproj)) {
             user.todo.push(actproj);
             await user.save();
@@ -157,19 +156,19 @@ app.post('/member', async (req, res) => {
     }
 });
 
-app.post('/selected', async (req, res) => {
-    let { memberId, projectId, id } = req.body; // Destructure subProjects
+app.post('/selected', ensureAuth,async (req, res) => {
+    let { memberId, projectId, id } = req.body; 
     let project = await Todo.findOne({ _id: projectId })
     let allTasks = [...project.created, ...project.in_prog, ...project.done];
     console.log(allTasks)
-    // Find the task with the matching id
+  
     let found = allTasks.find(t => t._id = id);
     console.log(found)
     if (!found) return res.status(404).json({ msg: 'Task not found' });
 
     console.log("Found task:", found);
 
-    // Optionally do something with it, like add the member:
+    
     if (!found.user.includes(memberId)) {
         found.user.push(memberId);
         project.save()
@@ -177,18 +176,18 @@ app.post('/selected', async (req, res) => {
 
     res.json({ msg: "saved" })
 })
-app.post('/update_status', async (req, res) => {
+app.post('/update_status',ensureAuth, async (req, res) => {
     let { subId, name, user, status, projectId } = req.body;
     try {
         let project = await Todo.findById(projectId);
         if (!project) return res.status(404).json({ msg: "Project not found" });
 
-        // Remove task by subtask _id (string match)
+    
         project.created = project.created.filter(t => String(t._id) !== String(subId));
         project.in_prog = project.in_prog.filter(t => String(t._id) !== String(subId));
         project.done = project.done.filter(t => String(t._id) !== String(subId));
 
-        // Push task with original _id preserved
+      
         let newTask = { _id: subId, todo: name, user };
         if (status === 'created') project.created.push(newTask);
         else if (status === 'in_prog') project.in_prog.push(newTask);
@@ -202,12 +201,12 @@ app.post('/update_status', async (req, res) => {
     }
 });
 
-app.post('/project_members_cuureently', async (req, res) => {
+app.post('/project_members_cuureently',ensureAuth, async (req, res) => {
     let { projectId } = req.body;
     let project = await Todo.findById(projectId);
     res.json({ members: project.members || [] });
 });
-app.post('/get_user_by_id', async (req, res) => {
+app.post('/get_user_by_id',ensureAuth, async (req, res) => {
   let  {id}  = req.body;
 console.log("sdfsdfsd",id)
   if (!id) {
