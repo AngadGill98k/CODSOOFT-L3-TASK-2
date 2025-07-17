@@ -18,12 +18,12 @@ async function getname(id) {
   })
   .then(res => res.json())
   .then(data => {
-    console.log(data); // ✅ Shows { name: "..." }
-    return data.name;  // ✅ This now goes back to caller
+    console.log(data);
+    return data.name;  
   })
   .catch(err => {
     console.error(err);
-    return id; // fallback
+    return id; 
   });
 }
 
@@ -50,10 +50,10 @@ async function getUserInfo(idArray) {
         }
       })
     );
-    return results; // array of names
+    return results; 
   } catch (err) {
     console.error("Error in getUserInfo:", err);
-    return idArray; // fallback
+    return idArray;
   }
 }
 
@@ -136,7 +136,7 @@ async function hnadlemember() {
             let project = document.querySelector(`[id="${actproj}"]`);
             let existing = JSON.parse(project.getAttribute('members') || '[]');
             if (!existing.includes(data.id)) {
-                existing.push(data.id); // Avoid duplicates if needed
+                existing.push(data.id); 
             }
             project.setAttribute('members', JSON.stringify(existing));
             console.log(project)
@@ -222,7 +222,7 @@ add_proj_btn.addEventListener('click', () => {
                 return response.json();
             })
             .then(data => {
-                // console.log(data.msg, data.todo, data.user);
+                
                 retrieve(data.user)
 
             })
@@ -377,7 +377,6 @@ let handleassignment = async (members, e) => {
     let projectId = todo.getAttribute('project-id');
     let assigned = JSON.parse(todo.getAttribute("assigned") || '[]');
 
-    // ✅ Fetch latest members from backend
     let updatedMembers = [];
     try {
         let res = await fetch(`http://localhost:3000/project_members_cuureently`, {
@@ -388,13 +387,12 @@ let handleassignment = async (members, e) => {
             }
         });
         let data = await res.json();
-        updatedMembers = data.members;  // expect server to return { members: [...] }
+        updatedMembers = data.members; 
     } catch (err) {
         console.error('Failed to fetch project members:', err);
-        updatedMembers = members; // fallback to existing
+        updatedMembers = members; 
     }
 
-    // ✅ Then show the modal with the freshest data
     showAssignmentModal(assigned, updatedMembers, projectId, id, todo);
 };
 
@@ -444,7 +442,7 @@ function showAssignmentModal(assigned, members, projectId, todoId, todoElem) {
                 assigned.push(memberId);
                 todoElem.setAttribute('assigned', JSON.stringify(assigned));
             }
-            // update or create the assigned display <div>
+        
 let assignedDiv = todoElem.querySelector('.assigned-display');
 if (!assignedDiv) {
     assignedDiv = document.createElement('div');
@@ -453,7 +451,7 @@ if (!assignedDiv) {
 }
 assignedDiv.textContent = 'Assigning to: ' + name;
 
-            // Update assigned list
+          
             assignedList.innerHTML = '';
             assigned.forEach(id => {
                 let li = document.createElement('li');
@@ -489,10 +487,10 @@ async function setupDragAndDrop() {
             draggable_todo.setAttribute('status', 'created')
             let droppedItem = draggable_todo;
             let temp = {
-                subId: droppedItem.getAttribute('id'), // subtask _id
+                subId: droppedItem.getAttribute('id'), 
                 name: droppedItem.getAttribute('name'),
                 user: JSON.parse(droppedItem.getAttribute('user') || '[]'),
-                status: 'created', // or created/done
+                status: 'created', 
                 projectId: droppedItem.getAttribute('project-id')
             };
 
@@ -533,10 +531,10 @@ async function setupDragAndDrop() {
             draggable_todo.setAttribute('status', 'in_prog')
             let droppedItem = draggable_todo;
             let temp = {
-    subId: droppedItem.getAttribute('id'), // subtask _id
+    subId: droppedItem.getAttribute('id'), 
     name: droppedItem.getAttribute('name'),
     user: JSON.parse(droppedItem.getAttribute('user') || '[]'),
-    status: 'in_prog', // or created/done
+    status: 'in_prog', 
     projectId: droppedItem.getAttribute('project-id')
 };
 
@@ -572,10 +570,10 @@ async function setupDragAndDrop() {
             draggable_todo.setAttribute('status', 'done')
             let droppedItem = draggable_todo;
             let temp = {
-    subId: droppedItem.getAttribute('id'), // subtask _id
+    subId: droppedItem.getAttribute('id'), 
     name: droppedItem.getAttribute('name'),
     user: JSON.parse(droppedItem.getAttribute('user') || '[]'),
-    status: 'done', // or created/done
+    status: 'done', 
     projectId: droppedItem.getAttribute('project-id')
 };
 
