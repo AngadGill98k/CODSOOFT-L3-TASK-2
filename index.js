@@ -160,10 +160,12 @@ app.post('/selected', ensureAuth,async (req, res) => {
     let { memberId, projectId, id } = req.body; 
     let project = await Todo.findOne({ _id: projectId })
     let allTasks = [...project.created, ...project.in_prog, ...project.done];
-    console.log(allTasks)
+    console.log(memberId,projectId,id)
+    console.log("alltask",allTasks)
   
-    let found = allTasks.find(t => t._id = id);
-    console.log(found)
+    let found = allTasks.find(t => t._id.toString() === id);
+
+    console.log("found",found)
     if (!found) return res.status(404).json({ msg: 'Task not found' });
 
     console.log("Found task:", found);
@@ -172,9 +174,10 @@ app.post('/selected', ensureAuth,async (req, res) => {
     if (!found.user.includes(memberId)) {
         found.user.push(memberId);
         project.save()
+        res.json({ msg: "saved" })
     }
 
-    res.json({ msg: "saved" })
+    
 })
 app.post('/update_status',ensureAuth, async (req, res) => {
     let { subId, name, user, status, projectId } = req.body;
