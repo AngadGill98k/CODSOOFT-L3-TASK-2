@@ -1,17 +1,17 @@
-const express = require('express');
-const app = express();
-const port = 3000;
-const path = require('path')
-const User = require('./models/user.js')
-const Todo = require('./models/todo.js')
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const cors = require('cors');
-const { log } = require('console');
+let express = require('express');
+let app = express();
+let port = 3000;
+let path = require('path')
+let User = require('./models/user.js')
+let Todo = require('./models/todo.js')
+let mongoose = require('mongoose');
+let bcrypt = require('bcrypt');
+let session = require('express-session');
+let MongoStore = require('connect-mongo');
+let passport = require('passport');
+let LocalStrategy = require('passport-local').Strategy;
+let cors = require('cors');
+let { log } = require('console');
 mongoose.connect('mongodb://127.0.0.1:27017/todo')
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
@@ -41,10 +41,10 @@ app.use(passport.session());
 passport.use(new LocalStrategy(
   { usernameField: 'mail' },  // tell passport to use `mail` instead of `username`
   async (mail, password, done) => {
-    const user = await User.findOne({ mail });
+    let user = await User.findOne({ mail });
     if (!user) return done(null, false, { message: 'User not found' });
     
-    const match = await bcrypt.compare(password, user.password);
+    let match = await bcrypt.compare(password, user.password);
     console.log(match)
     if (!match) return done(null, false, { message: 'Wrong password' });
 
@@ -58,7 +58,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  const user = await User.findById(id);
+  let user = await User.findById(id);
   done(null, user);
 });
 
@@ -160,7 +160,7 @@ app.post('/member', async (req, res) => {
 app.post('/selected', async (req, res) => {
     let { memberId, projectId, id } = req.body; // Destructure subProjects
     let project = await Todo.findOne({ _id: projectId })
-    const allTasks = [...project.created, ...project.in_prog, ...project.done];
+    let allTasks = [...project.created, ...project.in_prog, ...project.done];
     console.log(allTasks)
     // Find the task with the matching id
     let found = allTasks.find(t => t._id = id);
@@ -189,7 +189,7 @@ app.post('/update_status', async (req, res) => {
         project.done = project.done.filter(t => String(t._id) !== String(subId));
 
         // Push task with original _id preserved
-        const newTask = { _id: subId, todo: name, user };
+        let newTask = { _id: subId, todo: name, user };
         if (status === 'created') project.created.push(newTask);
         else if (status === 'in_prog') project.in_prog.push(newTask);
         else if (status === 'done') project.done.push(newTask);
@@ -203,19 +203,19 @@ app.post('/update_status', async (req, res) => {
 });
 
 app.post('/project_members_cuureently', async (req, res) => {
-    const { projectId } = req.body;
-    const project = await Todo.findById(projectId);
+    let { projectId } = req.body;
+    let project = await Todo.findById(projectId);
     res.json({ members: project.members || [] });
 });
 app.post('/get_user_by_id', async (req, res) => {
-  const  {id}  = req.body;
+  let  {id}  = req.body;
 console.log("sdfsdfsd",id)
   if (!id) {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
   try {
-    const user = await User.findOne({_id:id});
+    let user = await User.findOne({_id:id});
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -228,7 +228,7 @@ console.log("sdfsdfsd",id)
 });
 app.post('/getname', ensureAuth, async (req, res) => {
   try {
-    const { id } = req.body;
+    let { id } = req.body;
     // Your logic here
     let user= await User.findOne({_id:id})
     let name=user.user_name

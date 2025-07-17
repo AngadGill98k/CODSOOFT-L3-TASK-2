@@ -30,18 +30,18 @@ async function getname(id) {
 
 async function getUserInfo(idArray) {
   try {
-    const results = await Promise.all(
+    let results = await Promise.all(
       idArray.map(async (id) => {
         console.log("id is ",id)
         try {
-          const res = await fetch(`http://localhost:3000/get_user_by_id`, {
+          let res = await fetch(`http://localhost:3000/get_user_by_id`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id }),
           });
-          const data = await res.json();
+          let data = await res.json();
           console.log(data)
           return data.name ;
         } catch (err) {
@@ -86,7 +86,7 @@ async function d_project(projects) {
         let proj_todo = "Loading...";
         console.log('id being sent', value)
         try {
-            const res = await fetch(`http://localhost:3000/ret_proj_todos`, {
+            let res = await fetch(`http://localhost:3000/ret_proj_todos`, {
                 method: 'POST',
                 body: JSON.stringify({ value }),
                 headers: {
@@ -94,7 +94,7 @@ async function d_project(projects) {
                 }
             });
 
-            const data = await res.json();
+            let data = await res.json();
             console.log(data)
             proj_todo = data.todo || "No todo found";
 
@@ -103,7 +103,7 @@ async function d_project(projects) {
             proj_todo = "Error fetching todo";
         }
 
-        const item = document.createElement('li'); 
+        let item = document.createElement('li'); 
         item.setAttribute('id', proj_todo._id);
         item.setAttribute('created', JSON.stringify(proj_todo.created));
         item.setAttribute('done', JSON.stringify(proj_todo.done));
@@ -380,14 +380,14 @@ let handleassignment = async (members, e) => {
     // ✅ Fetch latest members from backend
     let updatedMembers = [];
     try {
-        const res = await fetch(`http://localhost:3000/project_members_cuureently`, {
+        let res = await fetch(`http://localhost:3000/project_members_cuureently`, {
             method: 'POST',
             body: JSON.stringify({ projectId }),
             headers: {
                 'Content-Type': 'application/json',
             }
         });
-        const data = await res.json();
+        let data = await res.json();
         updatedMembers = data.members;  // expect server to return { members: [...] }
     } catch (err) {
         console.error('Failed to fetch project members:', err);
@@ -399,45 +399,45 @@ let handleassignment = async (members, e) => {
 };
 
 function showAssignmentModal(assigned, members, projectId, todoId, todoElem) {
-    const oldModal = document.getElementById('assignmentModal');
+    let oldModal = document.getElementById('assignmentModal');
     if (oldModal) oldModal.remove();
 
-    const overlay = document.createElement('div');
+    let overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     overlay.id = 'assignmentModal';
 
-    const content = document.createElement('div');
+    let content = document.createElement('div');
     content.className = 'modal-content';
 
-    const closeBtn = document.createElement('button');
+    let closeBtn = document.createElement('button');
     closeBtn.className = 'close-btn';
     closeBtn.textContent = 'X';
     closeBtn.onclick = () => overlay.remove();
     
-    const assignedList = document.createElement('ul');
+    let assignedList = document.createElement('ul');
     assignedList.id = 'assigned_to';
     assigned.forEach(async id => {
         console.log(id)
         let name=await getname(id)
-        const li = document.createElement('li');
+        let li = document.createElement('li');
         li.textContent = `already assigned to ${name}`;
         assignedList.appendChild(li);
     });
 
-    const assignmentList = document.createElement('ul');
+    let assignmentList = document.createElement('ul');
     assignmentList.id = 'assignment';
     members.forEach(async memberId => {
         console.log(memberId);
         let name=await getname(memberId)
-        const li = document.createElement('li');
+        let li = document.createElement('li');
         li.textContent = `Assign to user: ${name}`;
         li.onclick = async () => {
-            const res = await fetch(`http://localhost:3000/selected`, {
+            let res = await fetch(`http://localhost:3000/selected`, {
                 method: 'POST',
                 body: JSON.stringify({ memberId, projectId, id: todoId }), 
                 headers: { 'Content-Type': 'application/json' }
             });
-            const data = await res.json();
+            let data = await res.json();
             console.log(data.msg); 
 
             if (!assigned.includes(memberId)) {
@@ -456,7 +456,7 @@ assignedDiv.textContent = 'Assigning to: ' + name;
             // Update assigned list
             assignedList.innerHTML = '';
             assigned.forEach(id => {
-                const li = document.createElement('li');
+                let li = document.createElement('li');
                 li.textContent = id;
                 assignedList.appendChild(li);
             });
@@ -499,14 +499,14 @@ async function setupDragAndDrop() {
 
             console.log("object attributes bieng ropped:", temp);
             try {
-                const res = await fetch("http://localhost:3000/update_status", {
+                let res = await fetch("http://localhost:3000/update_status", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(temp)
                 });
-                const data = await res.json();
+                let data = await res.json();
                 console.log("Server response:", data);
             } catch (err) {
                 console.error("Error sending status update:", err);
@@ -543,14 +543,14 @@ async function setupDragAndDrop() {
 
             console.log("object attributes bieng ropped:", temp);
             try {
-                const res = await fetch("http://localhost:3000/update_status", {
+                let res = await fetch("http://localhost:3000/update_status", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(temp)
                 });
-                const data = await res.json();
+                let data = await res.json();
                 console.log("Server response:", data);
             } catch (err) {
                 console.error("Error sending status update:", err);
@@ -580,14 +580,14 @@ async function setupDragAndDrop() {
 };
 
             try {
-                const res = await fetch("http://localhost:3000/update_status", {
+                let res = await fetch("http://localhost:3000/update_status", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(temp)
                 });
-                const data = await res.json();
+                let data = await res.json();
                 console.log("Server response:", data);
             } catch (err) {
                 console.error("Error sending status update:", err);
