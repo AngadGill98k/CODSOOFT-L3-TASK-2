@@ -185,7 +185,7 @@ app.post('/update_status',ensureAuth, async (req, res) => {
         let project = await Todo.findById(projectId);
         if (!project) return res.status(404).json({ msg: "Project not found" });
 
-    
+    console.log("users are",user);
         project.created = project.created.filter(t => String(t._id) !== String(subId));
         project.in_prog = project.in_prog.filter(t => String(t._id) !== String(subId));
         project.done = project.done.filter(t => String(t._id) !== String(subId));

@@ -489,7 +489,7 @@ async function setupDragAndDrop() {
             let temp = {
                 subId: droppedItem.getAttribute('id'), 
                 name: droppedItem.getAttribute('name'),
-                user: JSON.parse(droppedItem.getAttribute('user') || '[]'),
+                user: JSON.parse(droppedItem.getAttribute('assigned')),
                 status: 'created', 
                 projectId: droppedItem.getAttribute('project-id')
             };
@@ -533,7 +533,7 @@ async function setupDragAndDrop() {
             let temp = {
     subId: droppedItem.getAttribute('id'), 
     name: droppedItem.getAttribute('name'),
-    user: JSON.parse(droppedItem.getAttribute('user') || '[]'),
+    user: JSON.parse(droppedItem.getAttribute('assigned') || '[]'),
     status: 'in_prog', 
     projectId: droppedItem.getAttribute('project-id')
 };
@@ -572,7 +572,7 @@ async function setupDragAndDrop() {
             let temp = {
     subId: droppedItem.getAttribute('id'), 
     name: droppedItem.getAttribute('name'),
-    user: JSON.parse(droppedItem.getAttribute('user') || '[]'),
+    user: JSON.parse(droppedItem.getAttribute('assigned') || '[]'),
     status: 'done', 
     projectId: droppedItem.getAttribute('project-id')
 };
